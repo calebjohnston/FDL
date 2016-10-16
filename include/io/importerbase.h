@@ -30,14 +30,14 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
-#include "core/common.h"
+#include <core/common.h>
 
 namespace fdl {
 
 class ImporterBase {
 public:
-    virtual void load(const std::string &filename) = 0;
-    virtual void save(const std::string &filename) = 0;
+    virtual bool load(const std::string &filename) = 0;
+    virtual bool save(const std::string &filename) = 0;
 
 protected:
 	boost::property_tree::ptree pt;

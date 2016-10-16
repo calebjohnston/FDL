@@ -8,14 +8,12 @@
  */
 
 
-#include "logger/logger.h"
-#include "logger/logwriter.h"
+#include <logger/logger.h>
+#include <logger/logwriter.h>
 
-#include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/local_time/local_time.hpp>
 #include <iostream>
-#include <locale>
+#include <chrono>
+#include <ctime>
 
 namespace fdl {
 	
@@ -237,13 +235,12 @@ void Logger::writeMessage() {
  *
  */
 std::string Logger::currentTime(const char* format) {
-	
-	std::ostringstream dateTime;
-	const boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-	boost::posix_time::time_facet* const f = new boost::posix_time::time_facet(format);
-	dateTime.imbue(std::locale(dateTime.getloc(),f));
-	dateTime << now;
-	return dateTime.str();
+	std::chrono::time_point<std::chrono::system_clock> timeNow = std::chrono::system_clock::now();
+	std::time_t time = std::chrono::system_clock::to_time_t(timeNow);
+	std::tm *tmTime = std::localtime(&time);
+	char strTime[100];
+	std::strftime(strTime, 100, format, tmTime);
+	return std::string(strTime);
 }
 
 

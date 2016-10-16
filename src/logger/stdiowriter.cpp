@@ -7,15 +7,15 @@
  *
  */
 
-#include "logger/stdiowriter.h"
+#include <logger/stdiowriter.h>
 
 #include <iostream>
 
-#include <boost/thread/mutex.hpp>
+#include <mutex>
 
 namespace fdl {
 	
-boost::mutex StdOutWriter::m_coutMutex;
+std::mutex StdOutWriter::m_coutMutex;
 
 /**
  * Constructor. Initializes the format property.
@@ -57,7 +57,7 @@ void StdOutWriter::setFormat(const char* newFormat)
  */
 void StdOutWriter::write( Logger::LEVEL level, const std::string& identity, const std::string& message )
 {
-	boost::mutex::scoped_lock lock(m_coutMutex);
+	std::lock_guard<std::mutex> guard(m_coutMutex);
 	std::cout << "[" << Logger::currentTime(m_format) << " " << Logger::loggerLevelAsString( level ) << "] " <<  message << std::endl;
 }
 

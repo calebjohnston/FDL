@@ -1,6 +1,7 @@
 #include <png.h>
-#include "io/pbrtexporter.h"
-#include "logger/logger.h"
+#include <zlib.h>
+#include <io/pbrtexporter.h>
+#include <logger/logger.h>
 
 namespace fdl {
 
@@ -40,7 +41,8 @@ void PbrtExporter::write()
 	int sizeY = m_grid->getGridSizeY();
 	int sizeZ = m_grid->getGridSizeZ();
 	
-	float* density = m_grid->getDensityArray();
+	std::vector<float> density;
+	m_grid->getDensityArray(density);
 	exportDensity(m_filenameCounter, m_filenamePrefix, density, sizeX, sizeY, sizeZ);
 
 	m_filenameCounter++;
@@ -63,7 +65,7 @@ void PbrtExporter::write()
  * @param zRes resolution of the grid in the z dimension
  *
  */
-void PbrtExporter::exportDensity(int counter, std::string prefix, float* field, int xRes, int yRes, int zRes)
+void PbrtExporter::exportDensity(int counter, std::string prefix, std::vector<float> &field, int xRes, int yRes, int zRes)
 {
 	char buffer[256];
 	sprintf(buffer,"%04i", counter);
@@ -114,14 +116,12 @@ void PbrtExporter::exportDensity(int counter, std::string prefix, float* field, 
 		
 		if(m_isCancelled){
 			gzclose(file);
-			delete[] field;
 			return;
 		}
 	}
 	gzprintf(file, "] \n \n");
 
 	gzclose(file);
-	delete[] field;
 }
 
 }	// namespace fdl

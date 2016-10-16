@@ -26,12 +26,10 @@
 #include <set>
 #include <exception>
 #include <iostream>
+#include <string>
 
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-
-#include "core/common.h"
-#include "io/importerbase.h"
+#include <core/common.h>
+#include <io/importerbase.h>
 
 namespace fdl {
 
@@ -39,8 +37,12 @@ class SceneImporter : public ImporterBase {
 public:
 	SceneImporter();
 	~SceneImporter();
-    virtual void load(const std::string &filename);
-    virtual void save(const std::string &filename);
+    virtual bool load(const std::string &filename);
+    virtual bool save(const std::string &filename);
+
+protected:
+	std::string m_file;
+	int m_level;
 };
 
 }	// namespace fdl

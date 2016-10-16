@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <algorithm>
 
-#include "io/df3exporter.h"
-#include "logger/logger.h"
+#include <io/df3exporter.h>
+#include <logger/logger.h>
 
 namespace fdl {
 
@@ -39,7 +39,8 @@ void Df3Exporter::write()
 	int sizeY = m_grid->getGridSizeY();
 	int sizeZ = m_grid->getGridSizeZ();
 	
-	float* density = m_grid->getDensityArray();
+	std::vector<float> density;
+	m_grid->getDensityArray(density);
 	exportDensity(m_filenameCounter, m_filenamePrefix, density, sizeX, sizeY, sizeZ);
 
 	m_filenameCounter++;
@@ -63,7 +64,7 @@ void Df3Exporter::write()
  * @param zRes resolution of the grid in the z dimension
  *
  */
-void Df3Exporter::exportDensity(int counter, std::string prefix, float* field, int xRes, int yRes, int zRes)
+void Df3Exporter::exportDensity(int counter, std::string prefix, const std::vector<float> &field, int xRes, int yRes, int zRes)
 {
 	char buffer[256];
 	sprintf(buffer,"%04i", counter);

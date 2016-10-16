@@ -8,9 +8,9 @@
 #include <cfloat>
 #include <cmath>
 
-#include "core/vector.hpp"
-#include "core/grid.hpp"
-#include "core/particle.hpp"
+#include <core/vector.hpp>
+#include <core/grid.hpp>
+#include <core/particle.hpp>
 
 namespace fdl {
 	

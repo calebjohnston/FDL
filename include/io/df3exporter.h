@@ -24,9 +24,9 @@
 
 #include <string>
 
-#include "core/grid.hpp"
-#include "logger/logger.h"
-#include "io/exporterbase.h"
+#include <core/grid.hpp>
+#include <logger/logger.h>
+#include <io/exporterbase.h>
 
 namespace fdl {
 	
@@ -39,7 +39,7 @@ public:
 private:	
 	virtual void write();
 	
-	void exportDensity(int counter, std::string prefix, float* field, int xRes, int yRes, int zRes);
+	void exportDensity(int counter, std::string prefix, const std::vector<float> &field, int xRes, int yRes, int zRes);
 };
 
 }	// namespace fdl

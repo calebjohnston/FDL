@@ -17,23 +17,22 @@
 #include "cg/vecmath/vec2.hpp"
 #include "cg/vecmath/vec3.hpp"
 
-#include "render/camera.h"
+#include <render/camera.h>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #endif
 
 #ifndef _WIN32
 #include <sys/time.h>
 #else
 #include <ctime>
-#include <windows.h>
+#include <Winsock2.h>
 
 int gettimeofday (struct timeval *tv, void* tz)
 {

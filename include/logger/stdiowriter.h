@@ -23,11 +23,9 @@
 #ifndef __FDL_StdOutWriter_H
 #define __FDL_StdOutWriter_H
 
-#include "logger/logwriter.h"
+#include <mutex>
 
-namespace boost {
-	class mutex;
-}
+#include <logger/logwriter.h>
 
 namespace fdl {
 	
@@ -41,7 +39,7 @@ public:
 	void setFormat(const char* newFormat);
 	
 private:
-	static boost::mutex m_coutMutex;
+	static std::mutex m_coutMutex;
 	const char* m_format;
 	
 };

@@ -6,23 +6,21 @@
 #include <assert.h>
 #include <math.h>
 
-#include "cg/vecmath/vec2.hpp"
-#include "cg/vecmath/vec3.hpp"
-#include "cg/vecmath/vec4.hpp"
-#include "cg/vecmath/mat4.hpp"
-#include "cg/vecmath/mat3.hpp"
+#include <cg/vecmath/vec2.hpp>
+#include <cg/vecmath/vec3.hpp>
+#include <cg/vecmath/vec4.hpp>
+#include <cg/vecmath/mat4.hpp>
+#include <cg/vecmath/mat3.hpp>
 
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glew.h>
 #endif
 
-#include "render/camera.h"
+#include <render/camera.h>
 
 
 namespace fdl {
@@ -59,14 +57,14 @@ Camera::Camera()
 Camera::Camera(	const Vector3f& eye, 
 				const Vector3f& target, 
 				const Vector3f& up, 
-				float yFov, float near, float far)
+				float yFov, float nearPlane, float farPlane)
 {
 	m_eye = eye;
 	m_target = target;
 	m_up = up;
 	m_fov = yFov;
-	m_near = near;
-	m_far = far;
+	m_near = nearPlane;
+	m_far = farPlane;
 }
 
 /**
