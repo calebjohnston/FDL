@@ -174,9 +174,11 @@ int main(int argc, char **argv)
 	fdl::Fdl &f = fdl::Fdl::Instance();
 	f.setGridDimenctions(grid_dims[0], grid_dims[1], grid_dims[2], dx);
 	f.setCGTolerance((float)cg_tol);
-	f.setCGMaxIterations(100);
+	f.setCGMaxIterations(50);
 	f.setStep((float)dt);
 	f.start();
+
+	system("pause");
 
     return 0;
 }

@@ -4,6 +4,8 @@
 
 #include <io/pngexporter.h>
 
+#include <omp.h>
+
 namespace fdl {
 
 Fdl &Fdl::Instance()
@@ -87,8 +89,12 @@ void Fdl::stop()
 
 void Fdl::solverFunc()
 {
+	omp_set_num_threads(omp_get_num_procs());
+
 	PngExporter* pngOut = new fdl::PngExporter("density_export_");
 	unsigned totalIter = 0;
+
+	std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
 
 	while (!m_stop && totalIter < m_cgMaxIterations)
 	{
@@ -96,6 +102,10 @@ void Fdl::solverFunc()
 		pngOut->start(*m_macGrid);
 		++totalIter;
 	}
+
+	std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
+
+	std::cout << "Finished in " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << std::endl;
 }
 
 } // namespace fdl
