@@ -29,9 +29,9 @@
 #include <vector>
 #include <math.h>
 
-#include "core/common.h"
-#include "core/vector.hpp"
-#include "logger/logger.h"
+#include <core/common.h>
+#include <core/vector.hpp>
+#include <logger/logger.h>
 
 namespace fdl {
 
@@ -431,13 +431,12 @@ public:
 	}
 
 	// bad behavior...
-	float* getDensityArray() const
+	void getDensityArray(std::vector<float> &densityVector) const
 	{
-		float* _density = (float*)malloc(sizeof(float) * m_numPoints);
+		densityVector.resize(m_numPoints);
 		for (int i=0; i<m_numPoints; ++i) {
-			_density[i] = (float) m_d0[i].density;
+			densityVector[i] = (float) m_d0[i].density;
 		}
-		return _density;
 	}
 
 	/**

@@ -10,8 +10,9 @@
 #include <gl/glut.h>
 #elif defined(__APPLE__)
 #include <GLUT/glut.h>
-#elif defined(__WIN32__)
-#include <gl/glut.h>
+#elif defined(_WIN32)
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #endif
 #include <png.h>
 
@@ -263,7 +264,7 @@ namespace GlutRender {
 			exit(-1);
 		}
 
-		if (setjmp(png_ptr->jmpbuf)) {
+		if (setjmp(png_jmpbuf(png_ptr))) {
 			std::cerr << "Error: \"" << fname << "\" could not be written!" << std::endl;
 			exit(-1);
 

@@ -28,9 +28,9 @@
 #include <iostream>
 #include <vector>
 
-#include "core/common.h"
-#include "core/vector.hpp"
-#include "core/grid.hpp"
+#include <core/common.h>
+#include <core/vector.hpp>
+#include <core/grid.hpp>
 
 namespace fdl {
 

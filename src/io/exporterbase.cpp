@@ -1,7 +1,7 @@
-#include <boost/bind.hpp>
+#include <thread>
 
-#include "logger/logger.h"
-#include "io/exporterbase.h"
+#include <logger/logger.h>
+#include <io/exporterbase.h>
 
 namespace fdl {
 
@@ -39,11 +39,13 @@ long int ExporterBase::start(fdl::Grid& grid)
 	m_writeMutex.lock();
 	
 	m_grid = grid.copy();
-		
-	boost::thread t1(boost::bind(&ExporterBase::write,this));
+	
+	std::thread t1(&ExporterBase::write,this);
 	t1.join();
 	
 	m_writeMutex.unlock();
+
+	return 0;
 }
 
 /**

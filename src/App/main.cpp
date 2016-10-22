@@ -27,9 +27,7 @@
  */
 
 #include <boost/program_options.hpp>
-#include <boost/thread.hpp>
-#include <boost/signal.hpp>
-#include <boost/bind.hpp>
+
 namespace po = boost::program_options;
 
 #include <iostream>
@@ -42,18 +40,10 @@ namespace po = boost::program_options;
 #include <cfloat>
 #include <cmath>
 
-#include "core/common.h"
-#include "core/glutrender.h"
-#include "core/fluidsolver.h"
-#include "core/particle.hpp"
-#include "core/particlesystem.h"
-#include "core/grid.hpp"
-#include "io/pngexporter.h"
-#include "io/df3exporter.h"
-#include "io/pbrtexporter.h"
-#include "logger/logger.h"
-#include "logger/stdiowriter.h"
-#include "logger/syslogwriter.h"
+#include <logger/stdiowriter.h>
+#include <logger/syslogwriter.h>
+
+#include <core/Fdl.h>
 
 #ifndef TARGET_VERSION_MAJOR
 #define TARGET_VERSION_MAJOR 99
@@ -80,7 +70,6 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
  */
 int main(int argc, char **argv)
 {	
-	fdl::Logger out;
 	// figure out how to automate this output...
 	std::cout << "FDL version " << TARGET_VERSION_MAJOR << "." << TARGET_VERSION_MINOR << " of " << __DATE__ << " at " << __TIME__ << std::endl;
 	std::cout << "The source code to FDL is covered by the GNU GPL." << std::endl;
@@ -90,12 +79,11 @@ int main(int argc, char **argv)
 	fdl::StdOutWriter* stdlogger = new fdl::StdOutWriter();
 	stdlogger->setFormat("%H:%M:%S");
 	fdl::Logger::setIdentity("FDL");
-	// fdl::Logger::RegisterWriter(syslogger);
 	fdl::Logger::registerWriter(stdlogger);
 	fdl::Logger::setLevel(fdl::Logger::WARN | fdl::Logger::ERROR);
 	
 	std::vector<int> grid_dims(3, 50);	// grid dimensions
-	double dx = 0.01;
+	float dx = 0.01f;
 	double dt = 0.1;
 	double cg_tol = pow( FLT_EPSILON, 0.5 ); 	
 	std::string output_prefix = "density_export_";
@@ -182,24 +170,13 @@ int main(int argc, char **argv)
 	catch(...) {
 		ERROR() << "Exception of unknown type!";
 	}
-	
-	// fdl::GlutRender::init(argc, argv);
-	fdl::Grid* macGrid = new fdl::Grid(grid_dims[0], grid_dims[1], grid_dims[2], dx);
-	fdl::FluidSolver* fs = new fdl::FluidSolver(macGrid);
-	fs->setCGTolerance((float)cg_tol);
-	fs->setCGMaxIter(100);
-	fdl::PngExporter* pngOut = new fdl::PngExporter(output_prefix);
-	fdl::PbrtExporter* pbrtOut = new fdl::PbrtExporter(output_prefix);
-	// fdl::Df3Exporter* exporter = new fdl::Df3Exporter();
-	
-	// fdl::ParticleSystem* ps = new fdl::ParticleSystem();
-	// ps->init(macGrid);
-	while(1){
-		fs->step(dt);
-		// ps->step(dt);
-		pngOut->start(*macGrid);
-		pbrtOut->start(*macGrid);
-	}
+
+	fdl::Fdl &f = fdl::Fdl::Instance();
+	f.setGridDimenctions(grid_dims[0], grid_dims[1], grid_dims[2], dx);
+	f.setCGTolerance((float)cg_tol);
+	f.setCGMaxIterations(100);
+	f.setStep((float)dt);
+	f.start();
 
     return 0;
 }

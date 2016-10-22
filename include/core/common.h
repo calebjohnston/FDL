@@ -22,6 +22,7 @@
 
 #ifndef __FDL_COMMON_H
 #define __FDL_COMMON_H
+
 #include <cmath>
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -38,7 +39,7 @@ typedef enum interp_T { LINEAR, RK2, CATMULLROM } interp_T;
 // typedef enum fileFormat_T { POV_RAY, BLENDER, YAFARAY, PPM, PBRT, PNG } fileFormat_T;
 
 const int DIMENSIONS = 3;
-const float EPSILON = 1e-5; // use FLT_EPSILON in <cfloat> instead? 
+const float EPSILON = 1e-5f; // use FLT_EPSILON in <cfloat> instead? 
 const double PI = M_PI;
 const double E = M_E;
 

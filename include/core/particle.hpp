@@ -8,7 +8,7 @@
 #include <cfloat>
 #include <cmath>
 
-#include "core/vector.hpp"
+#include <core/vector.hpp>
 
 #define PARTICLE_MASS 1.0;
 

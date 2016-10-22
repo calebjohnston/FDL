@@ -8,9 +8,9 @@
 
 #include <png.h>
 
-#include "core/common.h"
-#include "core/fluidsolver.h"
-#include "logger/logger.h"
+#include <core/common.h>
+#include <core/fluidsolver.h>
+#include <logger/logger.h>
 
 
 namespace fdl {
@@ -99,8 +99,8 @@ float FluidSolver::computeMaxTimeStep() const
 	float maxVelocity = grid->getMaximumVelocity();
 	if (maxVelocity < 0.2) maxVelocity = 0.2f;
 	
-	maxVelocity += m_gravity.getSquareRoot().length();
-	return (5.0*m_dx) / maxVelocity;
+	maxVelocity += (float)m_gravity.getSquareRoot().length();
+	return (5.0f*m_dx) / maxVelocity;
 }
 
 
