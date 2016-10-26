@@ -20,9 +20,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
+#include <GL/glew.h>
 #endif
 
 namespace fdl {
@@ -43,7 +41,7 @@ public:
 	 * @param camName
 	 */
 	Camera(	const cg::vecmath::Vector3f& eye, const cg::vecmath::Vector3f& target, 
-			const cg::vecmath::Vector3f& up, float yFov, float near, float far);
+			const cg::vecmath::Vector3f& up, float yFov, float nearPlane, float farPlane);
 	
 	~Camera();
 	

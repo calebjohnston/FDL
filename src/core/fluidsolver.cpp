@@ -6,11 +6,13 @@
 #include <math.h>
 #include <cfloat>
 
+#include <omp.h>
+
 #include <png.h>
 
-#include "core/common.h"
-#include "core/fluidsolver.h"
-#include "logger/logger.h"
+#include <core/common.h>
+#include <core/fluidsolver.h>
+#include <logger/logger.h>
 
 
 namespace fdl {
@@ -99,8 +101,8 @@ float FluidSolver::computeMaxTimeStep() const
 	float maxVelocity = grid->getMaximumVelocity();
 	if (maxVelocity < 0.2) maxVelocity = 0.2f;
 	
-	maxVelocity += m_gravity.getSquareRoot().length();
-	return (5.0*m_dx) / maxVelocity;
+	maxVelocity += (float)m_gravity.getSquareRoot().length();
+	return (5.0f*m_dx) / maxVelocity;
 }
 
 
@@ -158,6 +160,7 @@ void FluidSolver::step(float dt)
 
 	// apply forces to velocity field
 	INFO() << "  + Adding forces ..";
+#pragma omp parallel for shared(dt) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int velIdx = z * m_velSlice;
 		for (int y=0; y<m_gridY; ++y, ++velIdx) {
@@ -186,6 +189,7 @@ void FluidSolver::applyForces(float dt)
 	grid->clearForces();
 
 	// Calculate the magnitude of the curl
+#pragma omp parallel for shared(dt) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int pos = z * m_slice;
 		for (int y=0; y<m_gridY; ++y) {
@@ -211,6 +215,7 @@ void FluidSolver::applyForces(float dt)
 	}
 
 	// Add the vorticity confinement force
+#pragma omp parallel for shared(dt) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int pos = z * m_slice;
 		for (int y=0; y<m_gridY; ++y) {
@@ -237,6 +242,7 @@ void FluidSolver::applyForces(float dt)
 	float ambient = 0;
 	float a = 0.0625f*0.5f;
 	float b = 0.025f;
+#pragma omp parallel for shared(dt), firstprivate(ambient, a, b) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int pos = z * m_slice;
 		int velIdx = z * m_velSlice;
@@ -280,6 +286,7 @@ void FluidSolver::project(float dt)
 	float inv_dx = 1.0 / m_dx;
 	
 	// CONSTANT DENSITY
+#pragma omp parallel for shared(dt) firstprivate(rho, inv_dx) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int velIdx = z * m_velSlice, pos = z * m_slice;
 		for (int y=0; y<m_gridY; ++y, ++velIdx) {
@@ -563,7 +570,8 @@ void FluidSolver::applyViscosity(float dt)
  */
 void FluidSolver::advect(float dt)
 {
-	// Advect the density field 	
+	// Advect the density field
+#pragma omp parallel for shared(dt) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int pos = z*m_slice;
 		for (int y=0; y<m_gridY; ++y) {
@@ -585,6 +593,7 @@ void FluidSolver::advect(float dt)
 	grid->swapDensities();
 
 	// Advect the velocity field
+#pragma omp parallel for shared(dt) schedule(dynamic, 1)
 	for (int z=0; z<m_gridZ; ++z) {
 		int pos = z*m_slice;
 		for (int y=0; y<m_gridY; ++y) {
@@ -875,11 +884,11 @@ float FluidSolver::cgSolve(const Vector& b, Vector& x)
  */
 float FluidSolver::pcgSolve(const Vector& b, Vector& x)
 {
-float M = inner_prod(x, b);
-if(M!=M){
-	std::cerr << "M is nan!" << std::endl;
-	exit(1);
-}
+	float M = inner_prod(x, b);
+	if(M!=M){
+		std::cerr << "M is nan!" << std::endl;
+		exit(1);
+	}
 
 	int k = 0;
 	float beta = 0;

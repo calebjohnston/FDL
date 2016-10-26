@@ -23,18 +23,16 @@
 #ifndef __FDL_SyslogWriter_H
 #define __FDL_SyslogWriter_H
 
-#include "logger/logwriter.h"
+#include <mutex>
 
-namespace boost {
-	class mutex;
-}
+#include <logger/logwriter.h>
 
 namespace fdl {
 	
 class SyslogWriter : public LogWriter {
 	
 private:
-	static boost::mutex m_syslogOutMutex;
+	static std::mutex m_syslogOutMutex;
 	
 public:
 	SyslogWriter();

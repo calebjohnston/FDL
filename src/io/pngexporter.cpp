@@ -1,7 +1,7 @@
 #include <png.h>
 
-#include "io/pngexporter.h"
-#include "logger/logger.h"
+#include <io/pngexporter.h>
+#include <logger/logger.h>
 
 namespace fdl {
 
@@ -38,7 +38,8 @@ void PngExporter::write()
 	int sizeX = m_grid->getGridSizeX();
 	int sizeY = m_grid->getGridSizeY();
 	int sizeZ = m_grid->getGridSizeZ();
-	float* density = m_grid->getDensityArray();
+	std::vector<float> density;
+	m_grid->getDensityArray(density);
 	exportDensity(m_filenameCounter, m_filenamePrefix, density, sizeX, sizeY, sizeZ);
 
 	m_filenameCounter++;
@@ -57,15 +58,15 @@ void PngExporter::write()
  * @param zRes resolution of the grid in the z dimension
  *
  */
-void PngExporter::exportDensity(int counter, std::string prefix, float* field, int xRes, int yRes, int zRes)
+void PngExporter::exportDensity(int counter, std::string prefix, const std::vector<float> &field, int xRes, int yRes, int zRes)
 {
 	char buffer[256];
 	sprintf(buffer,"%04i", counter);
 	std::string number = std::string(buffer);
 	int totalSize = xRes * yRes * zRes;
 
-	unsigned char pngbuf[xRes*yRes*4];
-	unsigned char* rows[yRes];
+	unsigned char *pngbuf = (unsigned char *)malloc(xRes * yRes * 4 * sizeof(unsigned char));
+	unsigned char **rows = (unsigned char **)malloc(yRes * sizeof(unsigned char *));
 	for (int j=0; j<yRes; ++j) {
 		for (int i=0; i<xRes; ++i) {
 			float val = 0;
@@ -88,6 +89,9 @@ void PngExporter::exportDensity(int counter, std::string prefix, float* field, i
 
 	DEV() << "Writing " << filenamePNG;
 	writePNG(filenamePNG.c_str(), rows, xRes, yRes);
+
+	free(pngbuf);
+	free(rows);
 }
 
 /**

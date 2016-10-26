@@ -7,16 +7,17 @@
  *
  */
 
-#include "logger/syslogwriter.h"
+#include <logger/syslogwriter.h>
 
-#include <boost/thread/mutex.hpp>
+#ifndef _WIN32
 #include <syslog.h>
+#endif
 #include <stdarg.h>
 
 
 namespace fdl {
 	
-boost::mutex SyslogWriter::m_syslogOutMutex;
+std::mutex SyslogWriter::m_syslogOutMutex;
 
 /**
  * constructor, initializes superclass LogWriter with "Syslog Writer"
@@ -44,14 +45,16 @@ SyslogWriter::~SyslogWriter( ) {
  */
 void SyslogWriter::write( Logger::LEVEL level, const std::string& identity, const std::string& message ) {
 	
-	boost::mutex::scoped_lock lock( m_syslogOutMutex );
+	std::lock_guard<std::mutex> lock( m_syslogOutMutex );
 	
 	std::ostringstream m;
 	m << "[" << Logger::loggerLevelAsString( level ) << "] " << message;
 	
+#ifndef _WIN32
 	openlog( identity.c_str(), LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL5 );
 	setlogmask( LOG_UPTO( LOG_NOTICE ) );
 	syslog(mapLevel( level ), "%s", m.str().c_str() );
+#endif
 	
 }
 
@@ -67,15 +70,15 @@ int SyslogWriter::mapLevel( const Logger::LEVEL& level ) {
 	
 	switch ( level ) {
 		case Logger::ERROR:
-			return LOG_ERR;
+			return Logger::ERROR;
 		case Logger::WARN:
-			return LOG_WARNING;
+			return Logger::WARN;
 		case Logger::INFO:
 		case Logger::DEV:
 		case Logger::DEBUG:
-			return LOG_NOTICE;
+			return Logger::INFO;
 	}
-	return LOG_DEBUG;
+	return Logger::DEBUG;
 }
 
 }	// namespace fdl

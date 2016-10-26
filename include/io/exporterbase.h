@@ -28,11 +28,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <mutex>
 
-#include <boost/thread/thread.hpp>
-
-#include "core/grid.hpp"
-#include "core/common.h"
+#include <core/grid.hpp>
+#include <core/common.h>
 
 namespace fdl {
 	
@@ -47,7 +46,7 @@ public:
 	
 protected:
 	// boost::thread m_writeThread;
-	boost::mutex m_writeMutex; 
+	std::mutex m_writeMutex; 
 	std::ofstream* m_filestream;
 	std::string m_filenamePrefix;
 	int m_filenameCounter;

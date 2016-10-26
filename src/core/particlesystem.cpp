@@ -5,10 +5,10 @@
 #include <cfloat>
 #include <cmath>
 
-#include "core/grid.hpp"
-#include "core/vector.hpp"
-#include "core/particle.hpp"
-#include "core/particlesystem.h"
+#include <core/grid.hpp>
+#include <core/vector.hpp>
+#include <core/particle.hpp>
+#include <core/particlesystem.h>
 
 namespace fdl {
 
